@@ -1,0 +1,39 @@
+
+
+Que bom seria, se cada um pudesse se concentrar e se especializar no seu trabalho não é?
+Afinal porque que diabos você programador fodastico na lógica que é, precisa dedicar seu precisos tempo com os comandos do Git e do Maven?
+
+pensando nisso, criamos Scripts para realizar os comandos mais  simples do Git e Maven,
+
+Se você for um especialista nestas tecnologias, sabemos que este projeto ainda pode melhorar muito com sua ajuda.
+participe em http://salviof.github.io/SuperBits_FrameWork/
+
+Os comando disponiveis são os comandos abaixo, sendo que Submodulos refere-se aos possíveis submodulos adicionados no diretorio git (ex: os resources e webInf do projeto costumam ser submodulos) o projeto atual está incluido automaticamente em todos, ou seja, quando voce compila Framework ele vai compilar o framework e o projeto.
+"xxxxTudo.sh" significa: model framework e submodulos
+já "xxxtodosProjetos.sh" significa as pastas: model_regras,webApp,android,ic,ws
+
+implantarHomologacçãoWeb.sh executa o  compilaTudo.sh, executa o TestesConformidade do model do webApp, e sobe a versão homologada para o servidor
+
+./baixarProjeto.sh (atualiza o projeto atual)
+./baixarFramwork.sh (atualiza o FrameWork e o Projeto Atual)
+./baixarModel.sh (Atualiza o Model e o Projeto Atual)
+./baixarSubModulos.sh (Atualiza o Model e o Projeto Atual)
+./baixarTudo.sh
+./baixarTodosProjetos.sh
+
+./compilaProjeto.sh
+./compilaModel.sh
+./compilaFrameWork.sh
+./compilaTudo.sh
+./compilaw.sh
+
+./sincronizar.sh
+./sincronizarModel.sh
+./sincronizarTudo.sh
+./sincronizarSubModulos.sh (Atualiza o Model e o Projeto Atual)
+./compila/TodosProjetos.sh
+
+./implantarHomologacaoWeb.sh
+TodosProjetos.sh
+
+
