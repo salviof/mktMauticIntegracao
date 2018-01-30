@@ -5,10 +5,14 @@
  */
 package com.super_bits.Super_Bits.mktMauticIntegracao.configAppp;
 
+import com.super_bits.Super_Bits.mktMauticIntegracao.regras_de_negocio_e_controller.FabConfigModuloMautic;
 import com.super_bits.Super_Bits.mktMauticIntegracao.regras_de_negocio_e_controller.FabMauticContatoRest;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
+import com.super_bits.modulosSB.SBCore.ConfigGeral.arquivosConfiguracao.ConfigModuloBean;
 import com.super_bits.modulosSB.SBCore.modulos.Controller.WS.conexaoWebServiceClient.ConexaoClienteWebService;
-import com.super_bits.modulosSB.SBCore.modulos.Controller.WS.oauth.MapaInfoOauthEmAndamento;
+import com.super_bits.modulosSB.SBCore.modulos.Controller.WS.oauth.FabTipoClienteOauth;
+import com.super_bits.modulosSB.SBCore.modulos.Controller.WS.oauth.InfoTokenOauth2;
+import com.super_bits.modulosSB.SBCore.modulos.Controller.WS.oauth.Oath2Conexao;
 import com.super_bits.modulosSB.SBCore.modulos.TratamentoDeErros.FabErro;
 import com.super_bits.modulosSB.SBCore.testesFW.TesteJunit;
 import java.util.Scanner;
@@ -64,6 +68,8 @@ public class TesteProjetoExemplo extends TesteJunit {
 
     public static void main(String... pParametros) {
         SBCore.configurar(new ConfiguradorCoremktMauticIntegracao(), SBCore.ESTADO_APP.DESENVOLVIMENTO);
+        ConfigModuloBean configMod = new ConfigModuloBean(SBCore.getConfigModulo(FabConfigModuloMautic.class));
+        System.out.println(configMod.getPropriedadeCampo(configMod.getCampos().get(0)).getValor());
         try {
 
             ConexaoClienteWebService conexaoTentativa1 = FabMauticContatoRest.CONTATO_LISTAR.getConexao();
@@ -72,7 +78,8 @@ public class TesteProjetoExemplo extends TesteJunit {
                 Scanner in = new Scanner(System.in);
 
                 String code = in.nextLine();
-                MapaInfoOauthEmAndamento.registrarSolicitacaoSistema(code);
+
+                InfoTokenOauth2 conecao = FabMauticContatoRest.CONTATO_LISTAR.gerarNovoToken(code);
                 ConexaoClienteWebService conexaoTentativa2 = FabMauticContatoRest.CONTATO_LISTAR.getConexao();
 
             } else {
@@ -92,7 +99,7 @@ public class TesteProjetoExemplo extends TesteJunit {
                     System.out.println(codigo);
                     ConexaoClienteWebService registro = FabMauticContatoRest.EMPRESA_CTR_SALVAR_EDITAR_EMPRESA.getConexao(codigo, "Casa nova digital", "contato@casanovadigital.com.br", "casanovadigital.com.br", "32240677", "Teste");
                     String reg = registro.getRespostaTexto();
-                    System.out.println(reg);
+                    System.out.println("REtorno edição " + reg);
                 }
                 System.out.println(valorTXT);
 

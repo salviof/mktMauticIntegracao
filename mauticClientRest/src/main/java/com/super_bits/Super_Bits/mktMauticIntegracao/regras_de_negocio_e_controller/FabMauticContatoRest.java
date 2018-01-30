@@ -33,6 +33,7 @@ public enum FabMauticContatoRest implements ItfFabRestMauticGenerico<ItfContato>
      */
     @InfoConsumoRestService(getCaminho = "/api/companies/new?access_token={0}",
             tipoInformacaoRecebida = FabTipoArquivoImportacao.JSON,
+            tipoConexao = FabTipoConexaoRest.POST,
             parametrosPost = {""}
     )
     EMPRESA_CTR_SALVAR_NOVA_EMPRESA,
@@ -81,7 +82,7 @@ public enum FabMauticContatoRest implements ItfFabRestMauticGenerico<ItfContato>
         if (conexao.isPossuiTokenValido()) {
             return ItfFabRestMauticGenerico.super.getConexao(pParametros); //To change body of generated methods, choose Tools | Templates.
         } else {
-            conexao.gerarNovoToken();
+            System.out.println("O Sistema não possui um token válido, acesse \n" + getUrlSolicitacaoAutenticacao() + " \n para Obter uma no");
             return null;
         }
 
@@ -94,7 +95,7 @@ public enum FabMauticContatoRest implements ItfFabRestMauticGenerico<ItfContato>
         getInformacoesConsumo().getCaminho();
 
         if (conexao.isPossuiTokenValido()) {
-            String token = MapaInfoOauthEmAndamento.getTokenSistema();
+            String token = MapaInfoOauthEmAndamento.getAutenticadorSistemaAtual(this).getTokenDeAcesso().getTokenValido();
 
             String caminhoServico = getInformacoesConsumo().getCaminho().replace("{0}", token);
             int i = 1;
