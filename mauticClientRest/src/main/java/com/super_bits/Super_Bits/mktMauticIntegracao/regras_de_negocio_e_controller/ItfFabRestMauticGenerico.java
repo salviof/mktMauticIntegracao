@@ -46,8 +46,11 @@ public interface ItfFabRestMauticGenerico<T> extends ItfFabricaIntegracaoRestOAu
     @Override
     public default InfoTokenOauth2 gerarNovoToken(String solicitacao) {
         if (solicitacao == null) {
+            System.out.println("Impossível gerar token com chave de solicitação nula");
             return null;
         }
+        System.out.println("Gerando token com solicitação" + solicitacao);
+
         try {
             String respostaStr = "";
 
