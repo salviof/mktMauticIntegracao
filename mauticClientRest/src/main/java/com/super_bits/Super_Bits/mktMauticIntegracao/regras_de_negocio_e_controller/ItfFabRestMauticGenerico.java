@@ -13,7 +13,7 @@ import com.super_bits.modulosSB.SBCore.modulos.Controller.WS.oauth.FabTipoClient
 import com.super_bits.modulosSB.SBCore.modulos.Controller.WS.oauth.InfoTokenOauth2;
 import com.super_bits.modulosSB.SBCore.modulos.Controller.WS.oauth.MapaInfoOauthEmAndamento;
 import com.super_bits.modulosSB.SBCore.modulos.Controller.WS.oauth.Oath2Conexao;
-import com.super_bits.modulosSB.SBCore.modulos.TratamentoDeErros.FabErro;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -21,6 +21,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Date;
 import org.apache.commons.codec.net.URLCodec;
+import org.coletivojava.fw.api.tratamentoErros.FabErro;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 

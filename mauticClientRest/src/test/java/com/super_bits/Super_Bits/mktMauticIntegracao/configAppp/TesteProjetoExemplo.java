@@ -10,16 +10,15 @@ import com.super_bits.Super_Bits.mktMauticIntegracao.regras_de_negocio_e_control
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.arquivosConfiguracao.ConfigModuloBean;
 import com.super_bits.modulosSB.SBCore.modulos.Controller.WS.conexaoWebServiceClient.ConexaoClienteWebService;
-import com.super_bits.modulosSB.SBCore.modulos.Controller.WS.oauth.FabTipoClienteOauth;
 import com.super_bits.modulosSB.SBCore.modulos.Controller.WS.oauth.InfoTokenOauth2;
-import com.super_bits.modulosSB.SBCore.modulos.Controller.WS.oauth.Oath2Conexao;
-import com.super_bits.modulosSB.SBCore.modulos.TratamentoDeErros.FabErro;
-import com.super_bits.modulosSB.SBCore.testesFW.TesteJunit;
+
 import java.util.Scanner;
+import org.coletivojava.fw.api.tratamentoErros.FabErro;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import org.junit.Test;
+import testesFW.TesteJunit;
 
 /**
  *
