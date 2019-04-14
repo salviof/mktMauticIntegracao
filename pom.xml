@@ -13,10 +13,8 @@
     <name>ProjetoSuper_Bits_mktMauticIntegracao</name>
 
     <modules>
-        <module>modelRegras</module>
-        <module>webApp</module>
-        <module>webAppRequisitos</module>
-        
+        <module>mauticClientRest</module>
+    
  	
     </modules>
 
