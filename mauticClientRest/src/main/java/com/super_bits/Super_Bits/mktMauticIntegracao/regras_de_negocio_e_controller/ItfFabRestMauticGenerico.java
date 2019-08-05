@@ -134,7 +134,7 @@ public interface ItfFabRestMauticGenerico<T> extends ItfFabricaIntegracaoRestOAu
     @Override
     public default String getUrlRetornoSucesso() {
         try {
-            String url = getOauthConexao().getSiteCliente() + "/solicitacaoAuth2Recept";
+            String url = getOauthConexao().getSiteCliente() + "/solicitacaoAuth2Recept/code/Sistema/FabMauticContatoRest/";
             return url;
         } catch (Throwable t) {
             return null;

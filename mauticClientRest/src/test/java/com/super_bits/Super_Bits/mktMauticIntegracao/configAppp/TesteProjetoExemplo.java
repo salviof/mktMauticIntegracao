@@ -9,6 +9,11 @@ import com.super_bits.Super_Bits.mktMauticIntegracao.regras_de_negocio_e_control
 import com.super_bits.Super_Bits.mktMauticIntegracao.regras_de_negocio_e_controller.FabMauticContatoRest;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.arquivosConfiguracao.ConfigModuloBean;
+import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreJson;
+import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringFiltros;
+import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringValidador;
+import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringsExtrator;
+import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreValidacao;
 import com.super_bits.modulosSB.SBCore.modulos.Controller.WS.conexaoWebServiceClient.ConexaoClienteWebService;
 import com.super_bits.modulosSB.SBCore.modulos.Controller.WS.oauth.InfoTokenOauth2;
 
@@ -71,41 +76,49 @@ public class TesteProjetoExemplo extends TesteJunit {
         System.out.println(configMod.getPropriedadeCampo(configMod.getCampos().get(0)).getValor());
         try {
 
-            ConexaoClienteWebService conexaoTentativa1 = FabMauticContatoRest.CONTATO_LISTAR.getConexao();
+            JSONParser parser = new JSONParser();
 
-            if (conexaoTentativa1 == null) {
-                Scanner in = new Scanner(System.in);
+            ConexaoClienteWebService restEmpresasComFiltro = FabMauticContatoRest.LISTAREMPRESA_COM_FILTRO.getConexao("salviof@gmail.com");
+            JSONObject jsonEmpresas = restEmpresasComFiltro.getRespostaComoObjetoJson();
+            ConexaoClienteWebService contatos = FabMauticContatoRest.CONTATO_LISTAR_COM_FILTRO.getConexao("emailnaoinformado@drDecio.com.br");
+            System.out.println(contatos.getRespostaTexto());
+            JSONObject jsonContatos = contatos.getRespostaComoObjetoJson();
+            String idContato = UtilSBCoreJson.getValorApartirDoCaminho("contacts[0].id", jsonContatos);
 
-                String code = in.nextLine();
+            String idEmpresa = UtilSBCoreJson.getValorApartirDoCaminho("companies[0].id", jsonEmpresas);
 
-                InfoTokenOauth2 conecao = FabMauticContatoRest.CONTATO_LISTAR.gerarNovoToken(code);
-                ConexaoClienteWebService conexaoTentativa2 = FabMauticContatoRest.CONTATO_LISTAR.getConexao();
-
-            } else {
-
-                System.out.println(conexaoTentativa1.getRespostaTexto());
-
-                JSONParser parser = new JSONParser();
-                Object valor = parser.parse(conexaoTentativa1.getRespostaTexto());
-                System.out.println(valor);
-
-                ConexaoClienteWebService registroUnico = FabMauticContatoRest.LISTAREMPRESA_COM_FILTRO.getConexao("contato@casanovadigital.com.br");
-
-                String valorTXT = registroUnico.getRespostaTexto();
-                JSONObject empresas = (JSONObject) ((JSONObject) parser.parse(valorTXT)).get("companies");
-                for (Object codEmpresa : empresas.keySet()) {
-                    String codigo = codEmpresa.toString();
-                    System.out.println(codigo);
-                    ConexaoClienteWebService registro = FabMauticContatoRest.EMPRESA_CTR_SALVAR_EDITAR_EMPRESA.getConexao(codigo, "Casa nova digital", "contato@casanovadigital.com.br", "casanovadigital.com.br", "32240677", "Teste");
-                    String reg = registro.getRespostaTexto();
-                    System.out.println("REtorno edição " + reg);
-                }
-                System.out.println(valorTXT);
-
-                ConexaoClienteWebService registro = FabMauticContatoRest.EMPRESA_CTR_SALVAR_NOVA_EMPRESA.getConexao("ClubeMM", "kleber@clubemm.com.br", "www.clublemm.com.br", "32240677", "");
-                String texto = registro.getRespostaTexto();
-                System.out.println(texto);
+            String contatoPrimeiroNome = UtilSBCoreJson.getValorApartirDoCaminho("contacts[0].fields[0].firstname", jsonContatos);
+            String contatoEmail = UtilSBCoreJson.getValorApartirDoCaminho("contacts[0].fields[0].email", jsonContatos);
+            String contatolastname = UtilSBCoreJson.getValorApartirDoCaminho("contacts[0].fields[0].lastname", jsonContatos);
+            String contatomobile = UtilSBCoreJson.getValorApartirDoCaminho("contacts[0].fields[0].mobile", jsonContatos);
+            if (contatomobile == null) {
+                contatomobile = "";
             }
+            ConexaoClienteWebService contatoAdicionado = FabMauticContatoRest.EMPRESA_CTR_SALVAR_ADICIONAR_CONTATO.getConexao(idEmpresa, idContato);
+            System.out.println(contatoAdicionado.getRespostaComoObjetoJson());
+
+            ConexaoClienteWebService conexaoEditar = FabMauticContatoRest.CONTATO_CTR_SALVAR_EDITAR_CONTATO.getConexao(idContato, contatoEmail, contatoPrimeiroNome,
+                    contatolastname, contatomobile);
+
+            System.out.println(conexaoEditar.getRespostaTexto());
+            JSONObject jsonContatoAtualizado = conexaoEditar.getRespostaComoObjetoJson();
+            String idContatoAtualizado = UtilSBCoreJson.getValorApartirDoCaminho("contact.id", jsonContatoAtualizado);
+            String valorTXT = restEmpresasComFiltro.getRespostaTexto();
+            JSONObject empresas = (JSONObject) ((JSONObject) parser.parse(valorTXT)).get("companies");
+            for (Object codEmpresa : empresas.keySet()) {
+                String codigo = codEmpresa.toString();
+                System.out.println(codigo);
+                ConexaoClienteWebService registro = FabMauticContatoRest.EMPRESA_CTR_SALVAR_EDITAR_EMPRESA.getConexao(codigo, "Casa nova digital", "contato@casanovadigital.com.br", "casanovadigital.com.br", "32240677", "Teste");
+                String reg = registro.getRespostaTexto();
+                JSONObject jsonEmpresaAtualizada = registro.getRespostaComoObjetoJson();
+                String idEmpresaAtualizado = UtilSBCoreJson.getValorApartirDoCaminho("company.id", jsonEmpresaAtualizada);
+                System.out.println("REtorno edição " + reg);
+            }
+            System.out.println(valorTXT);
+
+            ConexaoClienteWebService registro = FabMauticContatoRest.EMPRESA_CTR_SALVAR_NOVA_EMPRESA.getConexao("ClubeMM", "kleber@clubemm.com.br", "www.clublemm.com.br", "32240677", "");
+            String texto = registro.getRespostaTexto();
+            System.out.println(texto);
 
             //  FabMauticContatoRest.CONTATO_LISTAR.autenticarSistema();
             //System.out.println(configuracao.getPropriedade(FabConfigModuloMautic.CHAVE_API_PRIVADA));

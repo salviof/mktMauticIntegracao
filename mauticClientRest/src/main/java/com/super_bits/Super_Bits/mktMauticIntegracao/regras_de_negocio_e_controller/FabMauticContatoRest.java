@@ -19,36 +19,60 @@ import com.super_bits.modulosSB.SBCore.modulos.ManipulaArquivo.importacao.FabTip
  */
 public enum FabMauticContatoRest implements ItfFabRestMauticGenerico<ItfContato> {
 
-    @InfoConsumoRestService(getCaminho = "/api/contacts?access_token={0}", tipoInformacaoRecebida = FabTipoArquivoImportacao.JSON)
-    CONTATO_LISTAR,
+    @InfoConsumoRestService(getCaminho = "/api/contacts?search={1}", tipoInformacaoRecebida = FabTipoArquivoImportacao.JSON,
+            adicionarAutenticacaoBearer = true)
+    CONTATO_LISTAR_COM_FILTRO,
     /**
      * Encontra uma companha através de um campo, exemplo pelo site.
      */
-    @InfoConsumoRestService(getCaminho = "/api/companies?access_token={0}&search={1}", tipoInformacaoRecebida = FabTipoArquivoImportacao.JSON,
-            parametrosGet = {"search"})
+    @InfoConsumoRestService(getCaminho = "/api/companies?search={1}", tipoInformacaoRecebida = FabTipoArquivoImportacao.JSON,
+            parametrosGet = {"search"}, adicionarAutenticacaoBearer = true)
     LISTAREMPRESA_COM_FILTRO,
     CONTATO_CTR_SALVAR_NOVO_CONTATO,
+    @InfoConsumoRestService(getCaminho = "/api/contacts/{1}/edit",
+            tipoInformacaoRecebida = FabTipoArquivoImportacao.JSON,
+            tipoConexao = FabTipoConexaoRest.PUT,
+            adicionarAutenticacaoBearer = true,
+            parametrosPost = {"companyname", "companyemail", "companywebsite", "companyphone", "companydescription"}
+    )
+    CONTATO_CTR_SALVAR_EDITAR_CONTATO,
     /**
      *
      */
-    @InfoConsumoRestService(getCaminho = "/api/companies/new?access_token={0}",
+    @InfoConsumoRestService(getCaminho = "/api/companies/new",
             tipoInformacaoRecebida = FabTipoArquivoImportacao.JSON,
             tipoConexao = FabTipoConexaoRest.POST,
-            parametrosPost = {""}
+            adicionarAutenticacaoBearer = true,
+            parametrosPost = {"companyname", "companyemail", "companywebsite", "companyphone", "companydescription"}
     )
     EMPRESA_CTR_SALVAR_NOVA_EMPRESA,
-    @InfoConsumoRestService(getCaminho = "/api/companies/{1}/edit?access_token={0}",
+    @InfoConsumoRestService(getCaminho = "/api/companies/{1}/edit",
             tipoInformacaoRecebida = FabTipoArquivoImportacao.JSON,
             tipoConexao = FabTipoConexaoRest.PUT,
+            adicionarAutenticacaoBearer = true,
             parametrosGet = {"id"},
             parametrosPost = {"companyname", "companyemail", "companywebsite", "companyphone", "companydescription"}
     )
-    EMPRESA_CTR_SALVAR_EDITAR_EMPRESA;
+    EMPRESA_CTR_SALVAR_EDITAR_EMPRESA,
+    @InfoConsumoRestService(getCaminho = "/api/companies/{1}/contact/{2}/add",
+            tipoInformacaoRecebida = FabTipoArquivoImportacao.JSON,
+            adicionarAutenticacaoBearer = true,
+            tipoConexao = FabTipoConexaoRest.POST
+    )
+    EMPRESA_CTR_SALVAR_ADICIONAR_CONTATO;
 
     @Override
     public String getCorpoRequisicao(String... parametros) {
         String conteudo = "";
         switch (this) {
+            case CONTATO_CTR_SALVAR_EDITAR_CONTATO:
+                conteudo = "{\"id\":\"{0}\",\"email\":\"{1}\",\"firstname\":\"{2}\",\"lastname\":\"{3}\",\"mobile\":\"{4}\"}";
+                break;
+
+            case CONTATO_CTR_SALVAR_NOVO_CONTATO:
+
+                break;
+
             case EMPRESA_CTR_SALVAR_EDITAR_EMPRESA:
 
                 conteudo = "{ \"companyname\":\"{1}\",\"companyemail\":\"{2}\", \"companywebsite\": \"{3}\", \"companyphone\": \"{4}\",\"companydescription\":\"{5}\"}";
