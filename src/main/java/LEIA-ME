@@ -1,0 +1,59 @@
+
+
+
+*******************************************************************************
+
+
+O SUPER-BITS FRAMEWORK NASCEU OPEN-SOURCE, POR ACREDITAR NA FILOSOFIA DO TRABALHO
+COLETIVO, PARTICIPE DA COMUNIDADE, AJUDE-NOS A CRESCER, FAÇA SISTEMAS MAIS RÁPIDO
+QUE A EMPRESA QUE VOCÊ TRABALHA UTILIZANDO AS MARAVILHAS DO MUNTO OPEN-SOURCE.
+
+Mais informações em: https://github.com/salviof/SuperBits_FrameWork
+
+
+
+********************************************************************************
+
+
+Conceitos básicos:
+
+Toda aplicação do framework  possui 4 projetos: Model, WebApp, Android e WebService
+
+                            MODEL
+
+Em model fica toda regra de negocio Utilizando os beneficios do JPA, e de anotações
+que estendem os tipos de campo da tabela (como campo do tipo CNPJ e outros 30)
+
+Além do InfoCampo, a camada model organiza o Sistema em Açoes do sistema.
+
+As ações podem ser simples forumlários de coleta \ exibição de dados,(nomeadas com FRM)
+ou Até ações da camada controller (nomeadas com CRT), toda ação é Um ponto de função do sistema,
+que facilita calcular o custo de desenvolvimento do projeto.
+As ações são permissionaveis, ou seja, você pode configurar quem pode executar aquela ação.
+
+Além do model os outros projetos importam esta camada e tem  as respectivas funções:
+
+WebApp -> Paginas do Sistema
+Android -> Aplicativo Android
+WebService -> Framework Restfull  que utiliza as ações do sistema criadas no pacote Model
+
+
+Estamos precisando de Ajuda na documentação, (como você pode ver),
+mas por enquanto temos este exemplo, que permite você iniciar uma aplicação nova Utilizando o framework,
+
+Todos as classes do projeto foram comentadas com explicações seguindo o padrão JAVADOC,
+boa sorte para criar sua primeira solução com o SuperBits Framework
+
+
+
+
+
+
+
+
+
+
+
+
+
+
