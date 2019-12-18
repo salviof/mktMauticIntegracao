@@ -1,18 +1,12 @@
 package br.org.coletivoJava.integracoes.restMautic.implementacao;
 
 import br.org.coletivoJava.integracoes.restMautic.api.InfoIntegracaoRestMautic;
-import com.google.common.net.HttpHeaders;
 import com.super_bits.Super_Bits.mktMauticIntegracao.regras_de_negocio_e_controller.FabMauticContatoRest;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
-import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreClienteRest;
 import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreDataHora;
-import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebServiceClient.FabTipoConexaoRest;
-import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebServiceClient.RespostaWebServiceSimples;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.oauth.InfoTokenOauth2;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.gestaoToken.GestaoTokenOath2;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.FabTipoAgenteClienteRest;
-import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.token.ItfTokenGestao;
-import com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.UtilSBApiRestClient;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ItfUsuario;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -22,6 +16,8 @@ import java.net.URL;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.HttpHeaders;
 import org.apache.commons.codec.net.URLCodec;
 import org.coletivojava.fw.api.tratamentoErros.FabErro;
 import org.json.simple.JSONObject;
@@ -43,24 +39,31 @@ public class GestaoTokenRestMautic extends GestaoTokenOath2 {
         return urlServidorApiRest + "/oauth/v2/token/"
                 + "/oauth/v2/authorize"
                 + "?response_type=code&client_id=" + chavePublica
-                + "&redirect_uri=" + urlRetornoSolicitacaoSucesso;
+                + "&redirect_uri=" + urlRetornoReceberCodigoSolicitacao;
 
     }
 
     @Override
-    public String gerarNovoCodigoSolicitacao(String presposta) {
+    public String extrairNovoCodigoSolicitacao(HttpServletRequest pRespostaServidorAutenticador) {
+        return super.extrairNovoCodigoSolicitacao(pRespostaServidorAutenticador);
 
-        codigoSolicitacao = null;
     }
 
     @Override
-    public String gerarUrlInformadaRetornoSolictacaoSucesso() {
-        String url = urlRetornoSolicitacaoSucesso + "/solicitacaoAuth2Recept/code/Sistema/FabMauticContatoRest/";
-        return url;
+    public String gerarUrlTokenObterCodigoSolicitacao() {
+
+        return urlServidorApiRest + "/oauth/v2/authorize?response_type=code&client_id=" + chavePublica + "&redirect_uri=" + urlRetornoReceberCodigoSolicitacao;
+
     }
 
     @Override
-    public String gerarNovoToken(String pCodigoSolicitacao) {
+    public String gerarUrlRetornoReceberCodigoSolicitacao() {
+        return super.gerarUrlRetornoReceberCodigoSolicitacao();
+
+    }
+
+    @Override
+    public String gerarNovoToken() {
         if (codigoSolicitacao == null) {
             System.out.println("Impossível gerar token com chave de solicitação nula");
             return null;
@@ -75,8 +78,8 @@ public class GestaoTokenRestMautic extends GestaoTokenOath2 {
 
             String texto = "client_id=" + chavePublica
                     + "&client_secret=" + chavePrivada + ""
-                    + "&code=" + pCodigoSolicitacao
-                    + "&redirect_uri=" + new URLCodec().encode(urlRetornoSolicitacaoSucesso) + "&grant_type=authorization_code";
+                    + "&code=" + codigoSolicitacao
+                    + "&redirect_uri=" + new URLCodec().encode(urlRetornoReceberCodigoSolicitacao) + "&grant_type=authorization_code";
             conn.setRequestMethod("POST");
             conn.setRequestProperty(HttpHeaders.CONTENT_LENGTH, String.valueOf(texto.length()));
             conn.setDoOutput(true);
@@ -109,13 +112,6 @@ public class GestaoTokenRestMautic extends GestaoTokenOath2 {
     }
 
     // --------------------------------------3----------------------------------------//
-    @Override
-    public String gerarNovoToken() {
-
-        return gerarNovoToken(codigoSolicitacao);
-
-    }
-
     @Override
     public String loadTokenArmazenado() {
         try {
@@ -156,6 +152,11 @@ public class GestaoTokenRestMautic extends GestaoTokenOath2 {
     @Override
     public boolean validarToken() {
         return false;
+    }
+
+    @Override
+    public String gerarUrlRetornoSucessoGeracaoTokenDeAcesso() {
+        throw new UnsupportedOperationException("O METODO AINDA N\u00c3O FOI IMPLEMENTADO.");
     }
 
 }
