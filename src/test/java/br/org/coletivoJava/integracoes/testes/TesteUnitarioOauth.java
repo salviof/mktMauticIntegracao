@@ -32,19 +32,25 @@ public class TesteUnitarioOauth {
         String url = oauth.getComoGestaoOauth().getUrlObterCodigoSolicitacao();
         String urlRetorno = oauth.getComoGestaoOauth().getUrlRetornoReceberCodigoSolicitacao();
 
-        try {
-            URL urlanalize = new URL(urlRetorno);
-            String patch = urlanalize.getPath();
-            ServidorOauthRecepcaoSpark servidor = new ServidorOauthRecepcaoSpark(oauth.getComoGestaoOauth(), 7666, patch);
-            servidor.start();
-        } catch (MalformedURLException t) {
+        if (oauth.isTemTokemAtivo()) {
+            System.out.println("Já tem token");
+            System.out.println(oauth.getToken());
+        } else {
 
-        }
+            try {
+                URL urlanalize = new URL(urlRetorno);
+                String patch = urlanalize.getPath();
+                ServidorOauthRecepcaoSpark servidor = new ServidorOauthRecepcaoSpark(oauth.getComoGestaoOauth(), 7666, patch);
+                servidor.start();
+            } catch (MalformedURLException t) {
 
-        try {
-            Runtime.getRuntime().exec(new String[]{"chromium-browser", url});
-        } catch (IOException ex) {
-            Logger.getLogger(TesteUnitarioOauth.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            try {
+                Runtime.getRuntime().exec(new String[]{"chromium-browser", url});
+            } catch (IOException ex) {
+                Logger.getLogger(TesteUnitarioOauth.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
 
         int segundos = 10000;

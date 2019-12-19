@@ -38,9 +38,12 @@ public class ServidorOauthRecepcaoSpark extends Thread {
         Spark.get(caminho, (req, res) -> {
             try {
 
-                UtilSBApiRestClient.receberCodigoSolicitacaoOauth(req.raw());
+                if (UtilSBApiRestClient.receberCodigoSolicitacaoOauth(req.raw())) {
+                    return "Obrigado, agora estamos conectados com sua conta.";
+                } else {
+                    return "Falha Gerando Código de acesso";
+                }
 
-                return "Codigo Registrado";
             } catch (Throwable t) {
                 return "Erro Maluco" + t.getMessage();
             }

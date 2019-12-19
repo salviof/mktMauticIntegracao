@@ -8,13 +8,19 @@ import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basic
 
 @InfoIntegracaoRestMautic(tipo = FabMauticContatoRest.CONTATO_CTR_SALVAR_EDITAR_CONTATO)
 public class IntegracaoRestMauticContatoCtrSalvarEditarContato
-		extends
-			AcaoApiIntegracaoComOauthAbstrato {
+        extends
+        AcaoApiIntegracaoComOauthAbstrato {
 
-	public IntegracaoRestMauticContatoCtrSalvarEditarContato(
-			final FabTipoAgenteClienteRest pTipoAgente,
-			final ItfUsuario pUsuario, final java.lang.Object... pParametro) {
-		super(FabMauticContatoRest.CONTATO_CTR_SALVAR_EDITAR_CONTATO,
-				pTipoAgente, pUsuario, pParametro);
-	}
+    public IntegracaoRestMauticContatoCtrSalvarEditarContato(
+            final FabTipoAgenteClienteRest pTipoAgente,
+            final ItfUsuario pUsuario, final java.lang.Object... pParametro) {
+        super(FabMauticContatoRest.CONTATO_CTR_SALVAR_EDITAR_CONTATO,
+                pTipoAgente, pUsuario, pParametro);
+    }
+
+    @Override
+    public String gerarCorpoRequisicao() {
+        return "{\"id\":\"" + parametros[0] + "\",\"email\":\"" + parametros[1] + "\",\"firstname\":\"" + parametros[2] + "\",\"lastname\":\"" + parametros[3] + "\",\"mobile\":\"" + parametros[4] + "\"}";
+    }
+
 }

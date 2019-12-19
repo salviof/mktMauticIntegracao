@@ -8,13 +8,19 @@ import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basic
 
 @InfoIntegracaoRestMautic(tipo = FabMauticContatoRest.EMPRESA_CTR_SALVAR_NOVA_EMPRESA)
 public class IntegracaoRestMauticEmpresaCtrSalvarNovaEmpresa
-		extends
-			AcaoApiIntegracaoComOauthAbstrato {
+        extends
+        AcaoApiIntegracaoComOauthAbstrato {
 
-	public IntegracaoRestMauticEmpresaCtrSalvarNovaEmpresa(
-			final FabTipoAgenteClienteRest pTipoAgente,
-			final ItfUsuario pUsuario, final java.lang.Object... pParametro) {
-		super(FabMauticContatoRest.EMPRESA_CTR_SALVAR_NOVA_EMPRESA,
-				pTipoAgente, pUsuario, pParametro);
-	}
+    public IntegracaoRestMauticEmpresaCtrSalvarNovaEmpresa(
+            final FabTipoAgenteClienteRest pTipoAgente,
+            final ItfUsuario pUsuario, final java.lang.Object... pParametro) {
+        super(FabMauticContatoRest.EMPRESA_CTR_SALVAR_NOVA_EMPRESA,
+                pTipoAgente, pUsuario, pParametro);
+    }
+
+    @Override
+    public String gerarCorpoRequisicao() {
+        return "companyname=" + parametros[0] + "&companyemail=" + parametros[1] + "&companywebsite=" + parametros[2] + "&companyphone=" + parametros[3] + "&companydescription=" + parametros[4];
+    }
+
 }

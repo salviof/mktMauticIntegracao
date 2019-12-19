@@ -1,6 +1,5 @@
 package br.org.coletivoJava.integracoes.restMautic.implementacao;
 
-import br.org.coletivoJava.integracoes.restMautic.api.InfoIntegracaoRestMautic;
 import com.super_bits.Super_Bits.mktMauticIntegracao.regras_de_negocio_e_controller.FabMauticContatoRest;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
 import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreDataHora;
@@ -16,13 +15,11 @@ import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
-import org.apache.commons.codec.net.URLCodec;
 import org.coletivojava.fw.api.tratamentoErros.FabErro;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-@InfoIntegracaoRestMautic(tipo = FabMauticContatoRest.CONTATO_LISTAR_COM_FILTRO)
 public class GestaoTokenRestMautic extends GestaoTokenOath2 {
 
     public GestaoTokenRestMautic(final FabTipoAgenteClienteRest pTipoAgente,
@@ -34,11 +31,8 @@ public class GestaoTokenRestMautic extends GestaoTokenOath2 {
     // ------------------------ 1---------------------------------------//
     @Override
     public String gerarUrlTokenObterChaveAcesso() {
-        return urlServidorApiRest
-                + "/oauth/v2/authorize"
-                + "?response_type=code&client_id=" + chavePublica
-                + "&redirect_uri=" + urlRetornoReceberCodigoSolicitacao;
 
+        return urlServidorApiRest + "/oauth/v2/token";
     }
 
     @Override
@@ -49,14 +43,16 @@ public class GestaoTokenRestMautic extends GestaoTokenOath2 {
 
     @Override
     public String gerarUrlRetornoSucessoGeracaoTokenDeAcesso() {
-        urlRetornoReceberCodigoSolicitacao = "https://casanovadigital.com.br";
-        return urlRetornoReceberCodigoSolicitacao;
+        return "https://casanovadigital.com.br";
+
     }
 
     @Override
     public String gerarUrlTokenObterCodigoSolicitacao() {
-
-        return urlServidorApiRest + "/oauth/v2/token";
+        return urlServidorApiRest
+                + "/oauth/v2/authorize"
+                + "?response_type=code&client_id=" + chavePublica
+                + "&redirect_uri=" + urlRetornoReceberCodigoSolicitacao;
 
     }
 
@@ -75,21 +71,22 @@ public class GestaoTokenRestMautic extends GestaoTokenOath2 {
         System.out.println("Gerando token com solicitação" + codigoSolicitacao);
 
         try {
-            String respostaStr = "";
 
             gerarUrlRetornoSucessoGeracaoTokenDeAcesso();
             String texto = "client_id=" + chavePublica
-                    + "&client_secret=" + chavePrivada + ""
+                    + "&client_secret=" + chavePrivada
+                    + "&grant_type=authorization_code"
                     + "&code=" + codigoSolicitacao
-                    + "&redirect_uri=" + new URLCodec().encode(urlRetornoReceberCodigoSolicitacao) + "&grant_type=authorization_code";
+                    + "&redirect_uri=" + urlRetornoReceberCodigoSolicitacao;
+
             RespostaWebServiceSimples resp = UtilSBApiRestClient.getRespostaRest(urlSolictacaoToken, FabTipoConexaoRest.POST, true, new HashMap(), texto);
 
             if (resp.isSucesso()) {
                 JSONObject respostaJson = resp.getRespostaComoObjetoJson();
                 String tokenGerado = respostaJson.get("access_token").toString();
 
-                armazenarRespostaToken(respostaStr);
-
+                armazenarRespostaToken(respostaJson.toJSONString());
+                loadTokenArmazenado();
                 return tokenGerado;
             }
 
@@ -104,7 +101,7 @@ public class GestaoTokenRestMautic extends GestaoTokenOath2 {
     @Override
     public String loadTokenArmazenado() {
         try {
-            JSONObject infoTokentArmazenado = getConfig().getRepositorioDeArquivosExternos().getJsonObjeto(SBCore.getGrupoProjeto());
+            JSONObject infoTokentArmazenado = super.loadTokenArmazenadoComoJsonObject();
             if (infoTokentArmazenado == null) {
                 return null;
             }
@@ -112,7 +109,7 @@ public class GestaoTokenRestMautic extends GestaoTokenOath2 {
             tokenGerado.setTokenRefresh((String) infoTokentArmazenado.get("refresh_token"));
             String expiraStr = String.valueOf(infoTokentArmazenado.get("dataHoraExpirarToken"));
             tokenGerado.setDataHoraExpirarToken(new Date(Long.valueOf(expiraStr)));
-
+            tokenDeAcesso = tokenGerado;
             return tokenGerado.getTokenValido();
         } catch (Throwable t) {
             SBCore.RelatarErro(FabErro.SOLICITAR_REPARO, "ouve um erro tratando o token armazenado." + t.getMessage(), t);
@@ -129,8 +126,8 @@ public class GestaoTokenRestMautic extends GestaoTokenOath2 {
             Date dataHora = UtilSBCoreDataHora.incrementaSegundos(new Date(), Integer.parseInt(respostaJson.get("expires_in").toString()));
 
             respostaJson.put("dataHoraExpirarToken", String.valueOf(dataHora.getTime()));
-            getConfig().getRepositorioDeArquivosExternos().putConteudoRecursoExterno(SBCore.getGrupoProjeto(), respostaJson.toJSONString());
-            return super.armazenarRespostaToken(respostaJson); //chamada super do metodo (implementação classe pai)
+
+            return super.armazenarRespostaToken(respostaJson.toJSONString()); //chamada super do metodo (implementação classe pai)
         } catch (ParseException ex) {
             Logger.getLogger(GestaoTokenRestMautic.class.getName()).log(Level.SEVERE, null, ex);
             return false;
@@ -140,7 +137,7 @@ public class GestaoTokenRestMautic extends GestaoTokenOath2 {
 
     @Override
     public boolean validarToken() {
-        return false;
+        return tokenDeAcesso.getTokenValido() != null;
     }
 
 }
