@@ -4,20 +4,18 @@ import br.org.coletivoJava.integracoes.restMautic.api.InfoIntegracaoRestMautic;
 import com.super_bits.Super_Bits.mktMauticIntegracao.regras_de_negocio_e_controller.FabMauticContatoRest;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
 import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreDataHora;
+import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebServiceClient.FabTipoConexaoRest;
+import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebServiceClient.RespostaWebServiceSimples;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.oauth.InfoTokenOauth2;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.gestaoToken.GestaoTokenOath2;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.FabTipoAgenteClienteRest;
+import com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.UtilSBApiRestClient;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ItfUsuario;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.HttpHeaders;
 import org.apache.commons.codec.net.URLCodec;
 import org.coletivojava.fw.api.tratamentoErros.FabErro;
 import org.json.simple.JSONObject;
@@ -36,7 +34,7 @@ public class GestaoTokenRestMautic extends GestaoTokenOath2 {
     // ------------------------ 1---------------------------------------//
     @Override
     public String gerarUrlTokenObterChaveAcesso() {
-        return urlServidorApiRest + "/oauth/v2/token/"
+        return urlServidorApiRest
                 + "/oauth/v2/authorize"
                 + "?response_type=code&client_id=" + chavePublica
                 + "&redirect_uri=" + urlRetornoReceberCodigoSolicitacao;
@@ -50,9 +48,15 @@ public class GestaoTokenRestMautic extends GestaoTokenOath2 {
     }
 
     @Override
+    public String gerarUrlRetornoSucessoGeracaoTokenDeAcesso() {
+        urlRetornoReceberCodigoSolicitacao = "https://casanovadigital.com.br";
+        return urlRetornoReceberCodigoSolicitacao;
+    }
+
+    @Override
     public String gerarUrlTokenObterCodigoSolicitacao() {
 
-        return urlServidorApiRest + "/oauth/v2/authorize?response_type=code&client_id=" + chavePublica + "&redirect_uri=" + urlRetornoReceberCodigoSolicitacao;
+        return urlServidorApiRest + "/oauth/v2/token";
 
     }
 
@@ -73,36 +77,21 @@ public class GestaoTokenRestMautic extends GestaoTokenOath2 {
         try {
             String respostaStr = "";
 
-            URL url = new URL(urlSolictacaoToken);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-
+            gerarUrlRetornoSucessoGeracaoTokenDeAcesso();
             String texto = "client_id=" + chavePublica
                     + "&client_secret=" + chavePrivada + ""
                     + "&code=" + codigoSolicitacao
                     + "&redirect_uri=" + new URLCodec().encode(urlRetornoReceberCodigoSolicitacao) + "&grant_type=authorization_code";
-            conn.setRequestMethod("POST");
-            conn.setRequestProperty(HttpHeaders.CONTENT_LENGTH, String.valueOf(texto.length()));
-            conn.setDoOutput(true);
-            conn.setDoInput(true);
+            RespostaWebServiceSimples resp = UtilSBApiRestClient.getRespostaRest(urlSolictacaoToken, FabTipoConexaoRest.POST, true, new HashMap(), texto);
 
-            OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-            wr.write(texto);
-            wr.flush();
+            if (resp.isSucesso()) {
+                JSONObject respostaJson = resp.getRespostaComoObjetoJson();
+                String tokenGerado = respostaJson.get("access_token").toString();
 
-            BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
-            String output;
-            while ((output = br.readLine()) != null) {
-                respostaStr += output;
+                armazenarRespostaToken(respostaStr);
+
+                return tokenGerado;
             }
-            JSONParser parser = new JSONParser();
-            System.out.println(respostaStr);
-            JSONObject respostaJson = (JSONObject) parser.parse(respostaStr);
-            String tokenGerado = respostaJson.get("access_token").toString();
-
-            armazenarRespostaToken(respostaStr);
-
-            conn.disconnect();
-            return tokenGerado;
 
         } catch (Throwable t) {
             SBCore.RelatarErro(FabErro.SOLICITAR_REPARO, "Erro " + t.getMessage(), t);
@@ -152,11 +141,6 @@ public class GestaoTokenRestMautic extends GestaoTokenOath2 {
     @Override
     public boolean validarToken() {
         return false;
-    }
-
-    @Override
-    public String gerarUrlRetornoSucessoGeracaoTokenDeAcesso() {
-        throw new UnsupportedOperationException("O METODO AINDA N\u00c3O FOI IMPLEMENTADO.");
     }
 
 }

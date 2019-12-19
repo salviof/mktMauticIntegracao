@@ -9,8 +9,9 @@ import com.super_bits.Super_Bits.mktMauticIntegracao.configAppp.ConfiguradorCore
 import com.super_bits.Super_Bits.mktMauticIntegracao.regras_de_negocio_e_controller.FabMauticContatoRest;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.token.ItfTokenGestao;
-import com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.gestaoToken.MapaTokensGerenciados;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.junit.Test;
@@ -26,9 +27,19 @@ public class TesteUnitarioOauth {
     @Test
     public void testeMauticOauth() {
         SBCore.configurar(new ConfiguradorCoremktMauticIntegracao(), SBCore.ESTADO_APP.DESENVOLVIMENTO);
+
         ItfTokenGestao oauth = FabMauticContatoRest.CONTATO_CTR_SALVAR_EDITAR_CONTATO.getGestaoToken(SBCore.getUsuarioLogado());
         String url = oauth.getComoGestaoOauth().getUrlObterCodigoSolicitacao();
         String urlRetorno = oauth.getComoGestaoOauth().getUrlRetornoReceberCodigoSolicitacao();
+
+        try {
+            URL urlanalize = new URL(urlRetorno);
+            String patch = urlanalize.getPath();
+            ServidorOauthRecepcaoSpark servidor = new ServidorOauthRecepcaoSpark(oauth.getComoGestaoOauth(), 7666, patch);
+            servidor.start();
+        } catch (MalformedURLException t) {
+
+        }
 
         try {
             Runtime.getRuntime().exec(new String[]{"chromium-browser", url});
@@ -36,10 +47,7 @@ public class TesteUnitarioOauth {
             Logger.getLogger(TesteUnitarioOauth.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        ServidorOauthRecepcaoSpark servidor = new ServidorOauthRecepcaoSpark("8080");
-        servidor.start();
-
-        int segundos = 30;
+        int segundos = 10000;
         while (segundos >= 0) {
 
             try {

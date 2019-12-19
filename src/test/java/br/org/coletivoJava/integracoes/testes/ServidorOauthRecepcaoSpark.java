@@ -5,7 +5,10 @@
  */
 package br.org.coletivoJava.integracoes.testes;
 
+import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.token.ItfTokenGestaoOauth;
+import com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.TipoClienteOauth;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.UtilSBApiRestClient;
+import com.super_bits.modulosSB.SBCore.modulos.objetos.MapaObjetosProjetoAtual;
 import spark.Spark;
 
 /**
@@ -16,24 +19,28 @@ import spark.Spark;
  */
 public class ServidorOauthRecepcaoSpark extends Thread {
 
-    private String porta;
-    private String caminho;
+    private final int porta;
+    private final String caminho;
+    private final ItfTokenGestaoOauth token;
 
-    public ServidorOauthRecepcaoSpark(String porta) {
+    public ServidorOauthRecepcaoSpark(ItfTokenGestaoOauth pToken, int porta, String pCaminho) {
         this.porta = porta;
-
+        caminho = pCaminho;
+        token = pToken;
     }
 
     @Override
     public void run() {
-        String porta = this.porta;
+        MapaObjetosProjetoAtual.adcionarObjeto(TipoClienteOauth.class);
+
         Spark.port(Integer.valueOf(porta));
 
-        Spark.get("/hello", (req, res) -> {
+        Spark.get(caminho, (req, res) -> {
             try {
 
                 UtilSBApiRestClient.receberCodigoSolicitacaoOauth(req.raw());
-                return "Olá Cidadão";
+
+                return "Codigo Registrado";
             } catch (Throwable t) {
                 return "Erro Maluco" + t.getMessage();
             }
