@@ -97,6 +97,11 @@ public class GestaoTokenRestMautic extends GestaoTokenOath2 {
 
     }
 
+    @Override
+    public String extrairToken(JSONObject pJson) {
+        return (String) pJson.get("access_token");
+    }
+
     // --------------------------------------3----------------------------------------//
     @Override
     public String loadTokenArmazenado() {
@@ -105,7 +110,8 @@ public class GestaoTokenRestMautic extends GestaoTokenOath2 {
             if (infoTokentArmazenado == null) {
                 return null;
             }
-            InfoTokenOauth2 tokenGerado = new InfoTokenOauth2((String) infoTokentArmazenado.get("access_token"));
+            String tk = extrairToken(infoTokentArmazenado);
+            InfoTokenOauth2 tokenGerado = new InfoTokenOauth2(tk);
             tokenGerado.setTokenRefresh((String) infoTokentArmazenado.get("refresh_token"));
             String expiraStr = String.valueOf(infoTokentArmazenado.get("dataHoraExpirarToken"));
             tokenGerado.setDataHoraExpirarToken(new Date(Long.valueOf(expiraStr)));
@@ -124,7 +130,6 @@ public class GestaoTokenRestMautic extends GestaoTokenOath2 {
         try {
             respostaJson = (JSONObject) parser.parse(pJson);
             Date dataHora = UtilSBCoreDataHora.incrementaSegundos(new Date(), Integer.parseInt(respostaJson.get("expires_in").toString()));
-
             respostaJson.put("dataHoraExpirarToken", String.valueOf(dataHora.getTime()));
 
             return super.armazenarRespostaToken(respostaJson.toJSONString()); //chamada super do metodo (implementação classe pai)
