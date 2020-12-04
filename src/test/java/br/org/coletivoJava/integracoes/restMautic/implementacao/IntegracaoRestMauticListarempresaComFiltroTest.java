@@ -11,25 +11,40 @@ import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebServiceClient.RespostaWebServiceSimples;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import testes.testesSupers.ServicoRecepcaoOauthTestes;
+import testesFW.TesteJUnitBasicoSemPersistencia;
 
 /**
  *
  * @author sfurbino
  */
-public class IntegracaoRestMauticListarempresaComFiltroTest {
+public class IntegracaoRestMauticListarempresaComFiltroTest extends TesteJUnitBasicoSemPersistencia {
 
     public IntegracaoRestMauticListarempresaComFiltroTest() {
     }
 
     @Test
     public void testSomeMethod() {
-        // TODO review the generated test code and remove the default call to fail.
-        SBCore.configurar(new ConfiguradorCoremktMauticIntegracao(), SBCore.ESTADO_APP.DESENVOLVIMENTO);
+        try {
 
-        RespostaWebServiceSimples resp = FabMauticContatoRest.LISTAREMPRESA_COM_FILTRO.getAcao(SBCore.getUsuarioLogado(), "salviof@gmail.com").getResposta();
-        assertTrue("Falha ao obter lista de empresas com filtro", resp.isSucesso());
-        System.out.println(resp.getRespostaTexto());
-        System.out.println(resp.getRespostaErro());
+            // TODO review the generated test code and remove the default call to fail.
+            SBCore.configurar(new ConfiguradorCoremktMauticIntegracao(), SBCore.ESTADO_APP.DESENVOLVIMENTO);
+            ServicoRecepcaoOauthTestes.iniciarServico();
+
+            if (!FabMauticContatoRest.LISTAREMPRESA_COM_FILTRO.getGestaoToken(SBCore.getUsuarioLogado()).isTemTokemAtivo()) {
+                if (FabMauticContatoRest.LISTAREMPRESA_COM_FILTRO.getGestaoToken(SBCore.getUsuarioLogado()).gerarNovoToken() == null) {
+
+                }
+            }
+            IntegracaoRestMauticListarempresaComFiltro acao = (IntegracaoRestMauticListarempresaComFiltro) FabMauticContatoRest.LISTAREMPRESA_COM_FILTRO.getAcao(SBCore.getUsuarioLogado(), "salviof@gmail.com");
+
+            RespostaWebServiceSimples resp = acao.getResposta();
+            assertTrue("Falha ao obter lista de empresas com filtro", resp.isSucesso());
+            System.out.println(resp.getRespostaTexto());
+            System.out.println(resp.getRespostaErro());
+        } catch (Throwable t) {
+            lancarErroJUnit(t);
+        }
     }
 
 }

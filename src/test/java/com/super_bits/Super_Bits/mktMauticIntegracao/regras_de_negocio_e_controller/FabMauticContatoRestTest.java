@@ -26,7 +26,6 @@ public class FabMauticContatoRestTest extends TestesApiRest {
     public void testValues() {
         try {
             SBCore.configurar(new ConfiguradorCoremktMauticIntegracao(), SBCore.ESTADO_APP.DESENVOLVIMENTO);
-
             gerarCodigos(FabMauticContatoRest.class);
         } catch (Throwable t) {
             System.out.println("Deu merda");

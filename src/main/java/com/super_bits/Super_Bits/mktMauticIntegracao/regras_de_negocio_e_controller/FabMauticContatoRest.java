@@ -70,7 +70,8 @@ public enum FabMauticContatoRest implements ItfFabricaIntegracaoRest {
     @InfoConsumoRestService(getPachServico = "/api/companies/{0}/contact/{1}/add",
             tipoInformacaoRecebida = FabTipoArquivoImportacao.JSON,
             adicionarAutenticacaoBearer = true,
-            tipoConexao = FabTipoConexaoRest.POST
+            tipoConexao = FabTipoConexaoRest.POST,
+            parametrosPost = {"id", "email", "firstname", "lastname", "mobile", "tags"}
     )
     EMPRESA_CTR_SALVAR_ADICIONAR_CONTATO;
 

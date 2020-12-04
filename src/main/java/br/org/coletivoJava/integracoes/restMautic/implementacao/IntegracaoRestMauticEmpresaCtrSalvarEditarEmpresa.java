@@ -20,7 +20,7 @@ public class IntegracaoRestMauticEmpresaCtrSalvarEditarEmpresa
 
     @Override
     public String gerarCorpoRequisicao() {
-        return "{ \"companyname\":\"" + parametros[0] + "\",\"companyemail\":\"" + parametros[1] + "\", \"companywebsite\": \"" + parametros[2] + "\", \"companyphone\": \"" + parametros[3] + "\",\"companydescription\":\"" + parametros[4] + "\"}";
+        return "{ \"companyname\":\"" + parametros[1] + "\",\"companyemail\":\"" + parametros[2] + "\", \"companywebsite\": \"" + parametros[3] + "\", \"companyphone\": \"" + parametros[4] + "\",\"companydescription\":\"" + parametros[5] + "\"}";
     }
 
 }
