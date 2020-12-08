@@ -7,7 +7,7 @@ import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebSer
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebServiceClient.RespostaWebServiceSimples;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.oauth.InfoTokenOauth2;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.gestaoToken.GestaoTokenOath2;
-import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.FabTipoAgenteClienteRest;
+import com.super_bits.modulosSB.SBCore.integracao.libRestClient.api.FabTipoAgenteClienteApi;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.ChamadaHttpSimples;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.UtilSBApiRestClient;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ItfUsuario;
@@ -21,7 +21,7 @@ import org.json.simple.parser.ParseException;
 
 public class GestaoTokenRestMautic extends GestaoTokenOath2 {
 
-    public GestaoTokenRestMautic(final FabTipoAgenteClienteRest pTipoAgente,
+    public GestaoTokenRestMautic(final FabTipoAgenteClienteApi pTipoAgente,
             final ItfUsuario pUsuario) {
         super(FabMauticContatoRest.class, pTipoAgente, pUsuario);
 
